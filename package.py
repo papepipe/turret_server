@@ -12,9 +12,11 @@ requires = ['pyzmq', 'turret_resolver']
 
 build_requires = ['python']
 
+build_command = 'rez env python -c "python {root}/rezbuild.py {install}"'
+
+
 def commands():
     env.PATH.append('{root}/bin')
-    env.TURRET_SERVER.set('{root}/bin/turret-server-launcher.sh')
+    env.TURRET_SERVER.set('{root}/bin/turret-server.bat')
     env.TURRET_SRC.set('{root}/src')
-
     env.PYTHONPATH.append(env.TURRET_SRC)

@@ -22,6 +22,7 @@ import logging
 import sys
 import threading
 import traceback
+import tempfile
 
 from optparse import OptionParser
 
@@ -30,7 +31,7 @@ import zmq
 from turret import resolver
 
 
-TURRET_LOG_LOCATION = '/usr/tmp/turret-server/log'
+TURRET_LOG_LOCATION = tempfile.mkdtemp(suffix='_turret_log')
 ZMQ_WORKERS = 16
 ZMQ_PORT = 5555
 ZMQ_URL = "tcp://*:%s" % ZMQ_PORT
@@ -60,7 +61,7 @@ def get_logger():
         pass
 
     localtime = time.localtime()
-    log_prefix = time.strftime('%d_%b_%Y_%H:%M:%S', localtime)
+    log_prefix = time.strftime('%d_%b_%Y_%H_%M_%S', localtime)
     log_path = '%s/%s_turretServer.log' % (TURRET_LOG_LOCATION, log_prefix)
 
     logging.basicConfig(level=logging.INFO)
@@ -289,7 +290,7 @@ def start_server_manager(isThreaded):
         while True:
             if isThreaded:
                 # this will perform SG authentication, to avoid all threads trying to do it in parallel
-                resolver.authenticate()
+                # resolver.authenticate()
                 launch_threaded_server()
             else:
                 launch_simple_server()

@@ -16,7 +16,7 @@
 # SOFTWARE.
 #
 
-#! /usr/bin/python
+# ! /usr/bin/python
 
 import sys
 import os, os.path
@@ -30,18 +30,20 @@ import zmq
 
 DEFAULT_ADDRESS = "localhost"
 DEFAULT_PORT = 5555
-DEFAULT_MSG = "tank:/maya_publish_asset_cache_usd?Asset=building01&Step=model&Task=model&version=latest"
+DEFAULT_MSG = "tank://xzh/asset_usd_publish?Asset=room&Step=SUF&version=latest"
 DEFAULT_NUM_MESSAGES = 1
 DEFAULT_NUM_THREADS = 1
 
 SHOULD_OUTPUT = False
+
 
 def log_client(a_msg):
     if SHOULD_OUTPUT:
         print(a_msg)
 
 
-def create_client(a_address=DEFAULT_ADDRESS, a_port=DEFAULT_PORT, a_message=DEFAULT_MSG, a_numMessages=DEFAULT_NUM_MESSAGES):
+def create_client(a_address=DEFAULT_ADDRESS, a_port=DEFAULT_PORT,
+                  a_message=DEFAULT_MSG, a_numMessages=DEFAULT_NUM_MESSAGES):
     context = zmq.Context()
     #  Socket to talk to server
     log_client("Connecting to uri resolver server...")
@@ -74,14 +76,15 @@ def handle_client(options):
 
     # Start all threads
     for i in range(options.numThreads):
-        thread = Thread(target = create_client, args = (options.address, options.port, options.message, options.numMessages))
+        thread = Thread(target=create_client, args=(
+        options.address, options.port, options.message, options.numMessages))
         thread.start()
         threads.append(thread)
 
     # Wait for all threads to join
     for i in range(len(threads)):
         threads[i].join()
-    
+
     log_client("Finished %s threads" % options.numThreads)
 
 
@@ -89,13 +92,19 @@ def main():
     # Setup option parser
     p = OptionParser(usage="%prog arg1 [options]")
 
-    p.add_option("-a", "--address", dest="address", default=DEFAULT_ADDRESS, action="store")
-    p.add_option("-p", "--port", dest="port", default=DEFAULT_PORT, action="store", type="int")
-    p.add_option("-m", "--message", dest="message", default=DEFAULT_MSG, action="store")
-    p.add_option("-n", "--numMessages", dest="numMessages", default=DEFAULT_NUM_MESSAGES, action="store", type="int")
-    p.add_option("-t", "--numThreads", dest="numThreads", default=DEFAULT_NUM_THREADS, action="store", type="int")
-    p.add_option("-d", "--debug", dest="debug", default=True, action="store_true")
-    
+    p.add_option("-a", "--address", dest="address", default=DEFAULT_ADDRESS,
+                 action="store")
+    p.add_option("-p", "--port", dest="port", default=DEFAULT_PORT,
+                 action="store", type="int")
+    p.add_option("-m", "--message", dest="message", default=DEFAULT_MSG,
+                 action="store")
+    p.add_option("-n", "--numMessages", dest="numMessages",
+                 default=DEFAULT_NUM_MESSAGES, action="store", type="int")
+    p.add_option("-t", "--numThreads", dest="numThreads",
+                 default=DEFAULT_NUM_THREADS, action="store", type="int")
+    p.add_option("-d", "--debug", dest="debug", default=True,
+                 action="store_true")
+
     # Run option parser
     (opts, args) = p.parse_args(sys.argv[1:])
 
@@ -103,5 +112,6 @@ def main():
     SHOULD_OUTPUT = opts.debug
 
     handle_client(opts)
+
 
 main()
